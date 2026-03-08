@@ -14,7 +14,6 @@ const Sale = () => {
         value: '',
     });
     const [employees, setEmployees] = useState([]);
-
     const [saleDetails, setSaleDetails] = useState({
         sale: {
             id_vendor: null,
@@ -116,7 +115,8 @@ const Sale = () => {
             <h3>Sales</h3>
             <button className='btn btn-primary mb-2'
                 data-bs-toggle="modal"
-                data-bs-target="#addSaleModal">
+                data-bs-target="#addSaleModal"
+                onClick={fetchEmployees}>
                 Add new record
             </button>
             <table className='table table-bordered'>

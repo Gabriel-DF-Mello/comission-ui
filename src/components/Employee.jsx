@@ -70,11 +70,6 @@ const Employee = () => {
         try {
             if(editing){
                 response = await axios.put(`${process.env.REACT_APP_BASE_URL}/api/v1/employee/${employeeId}`, employee, { headers: { 'Authorization': token } })
-                if(response.status === 200){
-                    toast.success("Employee updated succesfully")
-                } else {
-                    toast.error("Employee could not be updated")
-                }
                 
             } else {
                 response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/v1/employee`, employee, { headers: { 'Authorization': token } })

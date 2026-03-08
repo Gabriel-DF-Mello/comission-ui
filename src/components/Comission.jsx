@@ -9,6 +9,7 @@ const Comission = () => {
     const { auth } = useContext(AuthContext)
     const token = `Bearer ${auth.token}`
     const [comissions, setComissions] = useState([]);
+    const [vendors, setVendors] = useState([])
 
     const [id_vendor, setIdVendor] = useState(null);
     const [start_date, setStartDate] = useState('');
@@ -16,7 +17,24 @@ const Comission = () => {
  
     useEffect(() => {
         fetchData();
+        fetchEmployees();
     }, []);
+
+    const fetchEmployees = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/v1/employee`, { headers: { 'Authorization': token} })
+            console.log(response)
+            if (response.status === 200){
+                setVendors(response.data)
+            } else {
+                toast.error("An error occurred")
+            }
+        } catch (error) {
+            toast.error("An error occurred")
+            console.log(error)
+        }
+    }
+
 
     const fetchData = async () => {
         try {
@@ -43,10 +61,11 @@ const Comission = () => {
             }
 
             const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/v1/comission/report`, body, { headers: { 'Authorization': token} })
-            setIdVendor(null)
+            setIdVendor(0)
             setStartDate('')
             setEndDate('')
             setComissions(response.data)
+            fetchEmployees();
             if(response.status === 200){
                 toast.success("Search successful")
             } else {
@@ -54,7 +73,7 @@ const Comission = () => {
             } 
         } catch (error) {
             console.log(error)
-            setIdVendor(null)
+            setIdVendor(0)
             setStartDate('')
             setEndDate('')
             toast.error("Search failed")
@@ -70,11 +89,17 @@ const Comission = () => {
             <div className='container'>
                 <form className="border rounded shadow-sm m-3" onSubmit={handleSubmit}>
                     <div class="row mb-3 g-3 m-2">
-                        <div className="col-md-4">
-                            <label htmlFor='id_vendor'>Vendor ID:</label>
-                            <input className='form-control' type='number' id='id_vendor' onChange={(e) => setIdVendor(e.target.value)} value={id_vendor}/>
+                        <div className='col-md-4'>
+                            <label htmlFor='id_vendor'>Vendor:</label>
+                            <select value={id_vendor} name="id_vendor" className='form-select mb-3' onChange={(e) => setIdVendor(e.target.value)}>
+                                    <option value={0}> Any </option>
+                                    {vendors.map((vendor) => (
+                                        <option value={vendor.id}>
+                                            {vendor.name}
+                                        </option>
+                                    ))}
+                            </select>
                         </div>
-
                         <div className="col-md-4">
                             <label htmlFor='start_date'>Start Date:</label>
                             <input className='form-control' type='date' id='start_date' onChange={(e) => setStartDate(e.target.value)} value={start_date}/>
